@@ -4,7 +4,7 @@ import { expect, test } from "../../utils/fixture";
 let authToken = null;
 let bookingId = null;
 
-test.skip('should create an auth token', async ({ request }) => {
+test('should create an auth token', async ({ request }) => {
   const response = await request.post(apiEndpoints.auth, {
     headers: {
       'Content-Type': 'application/json'
