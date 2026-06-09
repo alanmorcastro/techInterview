@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        nodejs 'NodeJS 18'
+    }
+
     stages {
         stage('Install dependencies') {
             steps {
@@ -14,6 +18,11 @@ pipeline {
                 echo 'Testing...'
                 sh 'npm run test:ci'
             }
+        }
+    }
+    post {
+        always {
+            echo 'Cleaning up...'
         }
     }
 }
