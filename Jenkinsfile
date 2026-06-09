@@ -1,13 +1,16 @@
 pipeline {
     agent {
-        docker { image 'mcr.microsoft.com/playwright:v1.60.0-noble' }
+        docker { 
+            image 'mcr.microsoft.com/playwright:v1.60.0-noble' 
+        }
     }
     
     stages {
         stage('Install dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'npm install'
+                sh 'npm ci'
+                sh 'npx playwright install --with-deps'
             }
         }
         stage('Test') {
