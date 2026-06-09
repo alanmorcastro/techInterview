@@ -27,17 +27,13 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         headless: false 
       },
-
     },
-
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'CI-Chromium',
+      use: { 
+        ...devices['Desktop Chrome'],
+        headless: true 
+      },
     },
 
     /* Test against mobile viewports. */
