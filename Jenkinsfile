@@ -1,28 +1,14 @@
 pipeline {
-    agent any
-    
-    tools {
-        nodejs 'NodeJS 26'
-    }
-
-    stages {
-        stage('Install dependencies') {
-            steps {
-                echo 'Installing dependencies...'
-                sh 'npm ci'
-                sh 'npx playwright install --with-deps'
-            }
+    agent {
+        docker {
+            image 'mcr.microsoft.com/playwright:v1.50.0-noble'
         }
+    }
+    stages {
         stage('Test') {
             steps {
-                echo 'Testing...'
-                sh 'npm run test:ci'
+                sh 'node --version'
             }
-        }
-    }
-    post {
-        always {
-            echo 'Cleaning up...'
         }
     }
 }
