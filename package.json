@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test --project=chromium"
+    "test:api": "npx playwright test --project=CI-Desktop /api",
+    "test:desktop": "npx playwright test --project=Desktop /ui",
+    "test:mobile": "npx playwright test --project=Mobile /ui",
+    "test:ci:desktop": "npx playwright test --project=CI-Desktop /ui",
+    "test:ci:mobile": "npx playwright test --project=CI-Mobile /ui",
+    "report": "npx playwright show-report"
   },
   "keywords": [],
   "author": "",
@@ -11,6 +16,6 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@types/node": "^25.6.0"
+    "@types/node": "^25.9.9"
   }
 }

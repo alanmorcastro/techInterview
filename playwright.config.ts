@@ -1,70 +1,72 @@
+/// <reference types="node" />
+
 import { defineConfig, devices } from '@playwright/test';
-import { BASE_URL } from './utils/constants';
+import { BASE_URL, USERAGENT } from './utils/constants';
+import { ACTION_TIMEOUT, EXPECT_TIMEOUT, TEST_TIMEOUT } from './utils/timeouts';
+
+const isCI = process.env.RUNMODE === 'jenkins';
 
 export default defineConfig({
   testDir: './tests',
-  /* Run tests in files in parallel */
   fullyParallel: false,
-  /* Opt out of parallel tests on CI. */
   workers: 1,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+  timeout: TEST_TIMEOUT(isCI),
+  expect: { timeout: EXPECT_TIMEOUT(isCI) },
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+  use: {
+    actionTimeout: ACTION_TIMEOUT(isCI),
     trace: 'on-first-retry',
-    baseURL: BASE_URL
+    baseURL: BASE_URL,
+    headless: false,
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    bypassCSP: true,
+    launchOptions: {
+      slowMo: 50,
+      args: ['--disable-web-security']
+    }
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { 
-        ...devices['Desktop Chrome'],
-        headless: false 
+      name: 'CI-Desktop',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1800, height: 1000 },
+        headless: true,
       },
-
     },
-
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'CI-Mobile',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 500, height: 1000 },
+        userAgent: USERAGENT,
+        isMobile: true,
+        hasTouch: true,
+        headless: true,
+      },
     },
-
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      name: 'Desktop',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1800, height: 1000 },
+      },
     },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    {
+      name: 'Mobile',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 500, height: 1000 },
+        userAgent: USERAGENT,
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  reporter: [['list'], ['html', { open: 'never' }]],
+
+  reportSlowTests: null,
 });
